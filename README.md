@@ -1,12 +1,4 @@
 ```mermaid
-
-config:
-theme: default
-look: classic
-title: Sample title
-
----
-
 classDiagram
 direction TB
 namespace Repositories {
@@ -321,5 +313,4 @@ class IGameServerRepository {
     classDef Class_02 :,stroke-width:4px,stroke-dasharray:0,stroke:#2962FF,fill:#BBDEFB,stroke-width:4px,stroke-dasharray:0,stroke:#2962FF,fill:#BBDEFB,stroke-width:4px,stroke-dasharray:0,stroke:#2962FF,fill:#BBDEFB,stroke-width:4px,stroke-dasharray:0,stroke:#2962FF,fill:#BBDEFB,stroke-width:4px,stroke-dasharray:0,stroke:#2962FF,fill:#BBDEFB,stroke-width:4px,stroke-dasharray:0,stroke:#2962FF,fill:#BBDEFB
     classDef Class_03 :,stroke-width:4px,stroke-dasharray:0,stroke:#E1BEE7,fill:#FFCDD2,stroke-width:4px,stroke-dasharray:0,stroke:#E1BEE7,fill:#FFCDD2
     classDef Class_04 :,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2
-
 ```
