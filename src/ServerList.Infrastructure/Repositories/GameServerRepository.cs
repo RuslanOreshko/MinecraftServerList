@@ -16,4 +16,6 @@ public sealed class GameServerRepository : IGameServerRepository
 
     public Task AddAsync(GameServer server, CancellationToken ct)
         => _db.GameServers.AddAsync(server, ct).AsTask();
+
+    public IQueryable<GameServer> Query() => _db.GameServers.AsNoTracking();
 }
