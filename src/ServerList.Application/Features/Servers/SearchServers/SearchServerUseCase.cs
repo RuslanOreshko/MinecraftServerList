@@ -1,37 +1,31 @@
 using Microsoft.EntityFrameworkCore;
 using ServerList.Application.Abstractions.Persistance;
 using ServerList.Application.Common.Pagination;
+using ServerList.Application.Features.Server.SearchServers.Abstractions;
+
 
 namespace ServerList.Application.Features.Server.SearchServers;
 
 public sealed class SearchServerUseCase : ISearchServerUseCase
 {
     private readonly IGameServerRepository _db;
+    private readonly IServerQueryPipeline _pipeline;
 
-    public SearchServerUseCase(IGameServerRepository db) => _db=db;
+    public SearchServerUseCase
+    (
+        IGameServerRepository db,
+        IServerQueryPipeline pipeline
+    )
+    {
+        _db = db;
+        _pipeline = pipeline;
+    }
 
     public async Task<PagedResult<ServerListItemDto>> ExecuteAsync(ServerSearchFilter filter, CancellationToken ct)
     {
         var query = _db.Query();
 
-        if(!string.IsNullOrWhiteSpace(filter.Country))
-            query = query.Where(x => x.Country == filter.Country);
-
-        if(!string.IsNullOrWhiteSpace(filter.Mode))
-            query = query.Where(x => x.Mode == filter.Mode);
-
-        if(!string.IsNullOrWhiteSpace(filter.Version))
-            query = query.Where(x => x.Version == filter.Version);
-
-        if(filter.MinRating is not null)
-            query = query.Where(x => x.AverageRating >= filter.MinRating.Value);
-
-        query = filter.SortBy switch
-        {
-            "rating" => query.OrderByDescending(x => x.AverageRating).ThenByDescending(x => x.RatingCount),
-            "online" => query.OrderByDescending(x => x.OnlinePlayers),
-            _ => query.OrderByDescending(x => x.CreatedAt),
-        };
+        query = _pipeline.ApplyAll(query, filter);
 
         var total = await query.CountAsync(ct);
 

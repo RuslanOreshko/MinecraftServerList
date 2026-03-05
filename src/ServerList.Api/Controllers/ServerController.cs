@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using ServerList.Application.Common.Pagination;
 using ServerList.Application.Features.Server.AddServer;
 using ServerList.Application.Features.Server.SearchServers;
+using ServerList.Application.Features.Server.SearchServers.Abstractions;
+
 
 namespace ServerList.Controllers;
 

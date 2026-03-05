@@ -1,6 +1,6 @@
 using ServerList.Application.Common.Pagination;
 
-namespace ServerList.Application.Features.Server.SearchServers;
+namespace ServerList.Application.Features.Server.SearchServers.Abstractions;
 
 
 public interface ISearchServerUseCase
