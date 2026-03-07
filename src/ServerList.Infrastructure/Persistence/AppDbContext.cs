@@ -10,6 +10,8 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<GameServer> GameServers => Set<GameServer>();
     public DbSet<Rating> Ratings => Set<Rating>();
+    public DbSet<Review> Reviews => Set<Review>();
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
