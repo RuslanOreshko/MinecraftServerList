@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using ServerList.Application.Features.Server.AddServer;
+using ServerList.Application.Features.Server.RateServer;
 using ServerList.Application.Features.Server.SearchServers;
 using ServerList.Application.Features.Server.SearchServers.Abstractions;
 using ServerList.Application.Features.Server.SearchServers.Strategies;
@@ -25,7 +26,10 @@ public static class DependencyInjection
 
         // pipeline for strategies
         services.AddScoped<IServerQueryPipeline, ServerQueryPipeline>();
-        
+
+        // rating use case DI
+        services.AddScoped<IRateServerUseCase, RateServerUseCase>();
+
         return services;
     }
 }

@@ -16,10 +16,13 @@ public static class DependencyInjection
         var cs = cfg.GetConnectionString("Postgres") 
             ?? throw new InvalidOperationException("Missing connections string: Postgres");
 
-        services.AddDbContext<AppDbContex>(opt => opt.UseNpgsql(cs));
+        services.AddDbContext<AppDbContext>(opt => opt.UseNpgsql(cs));
 
         services.AddScoped<IGameServerRepository, GameServerRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWorkEf>();
+
+        // Rating repo
+        services.AddScoped<IRatingRepository, RatingRepository>();
 
         return services;
     }

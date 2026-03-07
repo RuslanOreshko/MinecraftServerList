@@ -8,8 +8,8 @@ namespace ServerList.Infrastructure.Repositories;
 
 public sealed class GameServerRepository : IGameServerRepository
 {
-    private readonly AppDbContex _db;
-    public GameServerRepository(AppDbContex db) => _db = db;
+    private readonly AppDbContext _db;
+    public GameServerRepository(AppDbContext db) => _db = db;
 
     public Task<bool> ExistsByIpPortAsync(string ip, int port, CancellationToken ct) 
         => _db.GameServers.AnyAsync(x => x.Ip == ip && x.Port == port, ct);
@@ -18,4 +18,10 @@ public sealed class GameServerRepository : IGameServerRepository
         => _db.GameServers.AddAsync(server, ct).AsTask();
 
     public IQueryable<GameServer> Query() => _db.GameServers.AsNoTracking();
+
+    public Task<GameServer?> GetByIdAsync(Guid id, CancellationToken  ct) 
+        => _db.GameServers.FirstOrDefaultAsync(x => x.Id == id, ct);
+
+    public void Update(GameServer server) 
+        => _db.GameServers.Update(server);
 }

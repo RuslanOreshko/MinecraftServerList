@@ -10,7 +10,7 @@ using ServerList.Infrastructure.Persistence;
 
 namespace ServerList.Infrastructure.Persistence.Migrations
 {
-    [DbContext(typeof(AppDbContex))]
+    [DbContext(typeof(AppDbContext))]
     partial class AppDbContexModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -84,6 +84,36 @@ namespace ServerList.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("game_server", (string)null);
+                });
+
+            modelBuilder.Entity("ServerList.Domain.Entities.Rating", b =>
+                {
+                    b.Property<Guid>("ServerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Stars")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("ServerId", "UserId");
+
+                    b.ToTable("ratings", (string)null);
+                });
+
+            modelBuilder.Entity("ServerList.Domain.Entities.Rating", b =>
+                {
+                    b.HasOne("ServerList.Domain.Entities.GameServer", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Server");
                 });
 #pragma warning restore 612, 618
         }

@@ -9,4 +9,7 @@ public interface IGameServerRepository
     Task AddAsync(GameServer server, CancellationToken ct);
 
     IQueryable<GameServer> Query();
-}
+
+    Task<GameServer?> GetByIdAsync(Guid id, CancellationToken ct);
+    void Update(GameServer server);
+} 
