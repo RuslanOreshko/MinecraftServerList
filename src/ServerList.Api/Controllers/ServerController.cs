@@ -5,6 +5,9 @@ using ServerList.Application.Features.Server.SearchServers;
 using ServerList.Application.Features.Server.RateServer;
 using ServerList.Application.Features.Server.SearchServers.Abstractions;
 using ServerList.Application.Features.Server.AddReview;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using ServerList.Application.Features.Server.GetServerReviews;
+using System.Globalization;
 
 
 namespace ServerList.Api.Controllers;
@@ -18,19 +21,22 @@ public sealed class ServerController : ControllerBase
     private readonly ISearchServerUseCase _searchServers;
     private readonly IRateServerUseCase _rateServer;
     private readonly IAddReviewUseCase _addReview;
+    private readonly IGetServerReviewUseCase _getReviews;
 
     public ServerController
     (
         IAddServerUseCase useCase,
         ISearchServerUseCase searchServers,
         IRateServerUseCase rateServer,
-        IAddReviewUseCase addReview
+        IAddReviewUseCase addReview,
+        IGetServerReviewUseCase getReviews
     )
     {
         _useCase = useCase;
         _searchServers = searchServers;
         _rateServer =  rateServer;
         _addReview = addReview;
+        _getReviews = getReviews;
     }
 
     [HttpPost]
@@ -71,6 +77,7 @@ public sealed class ServerController : ControllerBase
         return Ok(result);
     }
 
+    // Add Review to server
     [HttpPost("{id:guid}/review")]
     public async Task<ActionResult<AddReviewResult>> AddReview(
         Guid id,
@@ -86,6 +93,18 @@ public sealed class ServerController : ControllerBase
             fakeUserId,
             ct
         );
+
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}/reviews")]
+    public async Task<ActionResult<PagedResult<ServerReviewItemDto>>> GetReviews(
+        Guid id,
+        [FromQuery] GetServerReviewFilter filter,
+        CancellationToken ct
+    )
+    {
+        var result = await _getReviews.ExecuteAsync(id, filter, ct);
 
         return Ok(result);
     }
