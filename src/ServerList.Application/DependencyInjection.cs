@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ServerList.Application.Features.Moderation.HideReview;
 using ServerList.Application.Features.Server.AddReview;
 using ServerList.Application.Features.Server.AddServer;
+using ServerList.Application.Features.Server.GetServerReviews;
 using ServerList.Application.Features.Server.RateServer;
 using ServerList.Application.Features.Server.SearchServers;
 using ServerList.Application.Features.Server.SearchServers.Abstractions;
@@ -35,6 +36,7 @@ public static class DependencyInjection
         // review use case DI
         services.AddScoped<IAddReviewUseCase, AddReviewUseCase>();
         services.AddScoped<IHideReviewUseCase, HideReviewUseCase>();
+        services.AddScoped<IGetServerReviewUseCase, GetServerReviewUseCase>();
 
         return services;
     }

@@ -7,5 +7,6 @@ public interface IReviewRepository
 {
     Task AddAsync(Review review, CancellationToken ct);
     Task<Review?> GetByIdAsync(Guid id, CancellationToken ct);
+    IQueryable<Review> Query();
     void Update(Review review);
 }

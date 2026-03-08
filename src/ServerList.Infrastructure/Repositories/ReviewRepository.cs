@@ -20,4 +20,7 @@ public sealed class ReviewRepository : IReviewRepository
 
     public void Update(Review review)
         => _db.Reviews.Update(review);
+
+    public IQueryable<Review> Query()
+        => _db.Reviews.AsNoTracking();
 }
