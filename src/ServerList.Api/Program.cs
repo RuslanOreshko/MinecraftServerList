@@ -1,4 +1,5 @@
 using Scalar.AspNetCore;
+using ServerList.Api.middleware;
 using ServerList.Application;
 using ServerList.Infrastructure;
 
@@ -22,6 +23,10 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.MapControllers();
+
 app.Run();
 

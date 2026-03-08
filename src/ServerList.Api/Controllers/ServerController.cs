@@ -7,7 +7,7 @@ using ServerList.Application.Features.Server.SearchServers.Abstractions;
 using ServerList.Application.Features.Server.AddReview;
 
 
-namespace ServerList.Controllers;
+namespace ServerList.Api.Controllers;
 
 
 [ApiController]
