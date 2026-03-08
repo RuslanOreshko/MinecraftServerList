@@ -1,8 +1,8 @@
-using System.Net.NetworkInformation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServerList.Application.Abstractions.Persistance;
+using ServerList.Domain.Entities;
 using ServerList.Infrastructure.Persistence;
 using ServerList.Infrastructure.Repositories;
 
@@ -23,6 +23,9 @@ public static class DependencyInjection
 
         // Rating repo
         services.AddScoped<IRatingRepository, RatingRepository>();
+
+        // Review repo
+        services.AddScoped<IReviewRepository, ReviewRepository>();
 
         return services;
     }

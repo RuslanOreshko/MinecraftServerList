@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using ServerList.Application.Features.Server.AddReview;
 using ServerList.Application.Features.Server.AddServer;
 using ServerList.Application.Features.Server.RateServer;
 using ServerList.Application.Features.Server.SearchServers;
@@ -29,6 +30,9 @@ public static class DependencyInjection
 
         // rating use case DI
         services.AddScoped<IRateServerUseCase, RateServerUseCase>();
+
+        // review use case DI
+        services.AddScoped<IAddReviewUseCase, AddReviewUseCase>();
 
         return services;
     }

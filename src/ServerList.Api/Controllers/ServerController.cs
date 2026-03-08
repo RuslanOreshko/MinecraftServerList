@@ -4,6 +4,7 @@ using ServerList.Application.Features.Server.AddServer;
 using ServerList.Application.Features.Server.SearchServers;
 using ServerList.Application.Features.Server.RateServer;
 using ServerList.Application.Features.Server.SearchServers.Abstractions;
+using ServerList.Application.Features.Server.AddReview;
 
 
 namespace ServerList.Controllers;
@@ -16,17 +17,20 @@ public sealed class ServerController : ControllerBase
     private readonly IAddServerUseCase _useCase;
     private readonly ISearchServerUseCase _searchServers;
     private readonly IRateServerUseCase _rateServer;
+    private readonly IAddReviewUseCase _addReview;
 
     public ServerController
     (
         IAddServerUseCase useCase,
         ISearchServerUseCase searchServers,
-        IRateServerUseCase rateServer
+        IRateServerUseCase rateServer,
+        IAddReviewUseCase addReview
     )
     {
         _useCase = useCase;
         _searchServers = searchServers;
         _rateServer =  rateServer;
+        _addReview = addReview;
     }
 
     [HttpPost]
@@ -60,6 +64,25 @@ public sealed class ServerController : ControllerBase
         var result = await _rateServer.ExecuteAsync(
             id,
             request.Stars,
+            fakeUserId,
+            ct
+        );
+
+        return Ok(result);
+    }
+
+    [HttpPost("{id:guid}/review")]
+    public async Task<ActionResult<AddReviewResult>> AddReview(
+        Guid id,
+        [FromBody] AddReviewRequest request,
+        CancellationToken ct
+    )
+    {
+        var fakeUserId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+
+        var result = await _addReview.ExecuteAsync(
+            id,
+            request.Text,
             fakeUserId,
             ct
         );
