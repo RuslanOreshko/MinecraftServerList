@@ -1,4 +1,4 @@
-namespace ServerList.Application.Features.Server.HideReview;
+namespace ServerList.Application.Features.Moderation.HideReview;
 
 
 public sealed record HideReviewResult(
