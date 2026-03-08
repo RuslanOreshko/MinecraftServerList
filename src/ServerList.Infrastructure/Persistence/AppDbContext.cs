@@ -11,7 +11,9 @@ public sealed class AppDbContext : DbContext
     public DbSet<GameServer> GameServers => Set<GameServer>();
     public DbSet<Rating> Ratings => Set<Rating>();
     public DbSet<Review> Reviews => Set<Review>();
-
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

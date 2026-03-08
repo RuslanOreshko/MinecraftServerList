@@ -78,7 +78,7 @@ public sealed class ServerController : ControllerBase
     }
 
     // Add Review to server
-    [HttpPost("{id:guid}/review")]
+    [HttpPost("{id:guid}/reviews")]
     public async Task<ActionResult<AddReviewResult>> AddReview(
         Guid id,
         [FromBody] AddReviewRequest request,
