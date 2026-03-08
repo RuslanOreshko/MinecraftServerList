@@ -14,11 +14,11 @@ public sealed class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
         b.HasKey(x => new { x.UserId, x.RoleId });
 
         b.HasOne(x => x.User)
-            .WithMany()
+            .WithMany(x => x.UserRoles)
             .HasForeignKey(x => x.UserId);
 
         b.HasOne(x => x.Role)
-            .WithMany()
+            .WithMany(x => x.UserRoles)
             .HasForeignKey(x => x.RoleId);
     }
 }

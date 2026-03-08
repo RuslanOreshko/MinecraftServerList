@@ -18,5 +18,11 @@ public sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
             .HasMaxLength(50);
 
         b.HasIndex(x => x.Name).IsUnique();
+
+        b.HasData(
+            new Role { Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), Name = "User" },
+            new Role { Id = Guid.Parse("22222222-2222-2222-2222-222222222222"), Name = "Moderator" },
+            new Role { Id = Guid.Parse("33333333-3333-3333-3333-333333333333"), Name = "Admin" }
+        );
     }
 }

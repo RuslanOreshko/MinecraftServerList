@@ -11,4 +11,6 @@ public sealed class User
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public bool IsBlocked { get; set; }
+
+    public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }
