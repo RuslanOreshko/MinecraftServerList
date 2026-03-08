@@ -3,12 +3,12 @@ using ServerList.Application.Abstractions.Persistance;
 namespace ServerList.Application.Features.Moderation.HideReview;
 
 
-public sealed class HideReviewUserCase : IHideReviewUseCase
+public sealed class HideReviewUseCase : IHideReviewUseCase
 {
     private readonly IReviewRepository _reviews;
     private readonly IUnitOfWork _uow;
 
-    public HideReviewUserCase(
+    public HideReviewUseCase(
         IReviewRepository reviews,
         IUnitOfWork uow
     )
