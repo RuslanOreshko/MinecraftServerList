@@ -1,7 +1,7 @@
-using System.Net;
 using System.Text.Json;
+using ServerList.Application.Common.Exceptions;
 
-namespace ServerList.Api.middleware;
+namespace ServerList.Api.Middleware;
 
 public sealed class ExceptionHandlingMiddleware
 {
@@ -10,8 +10,7 @@ public sealed class ExceptionHandlingMiddleware
 
     public ExceptionHandlingMiddleware(
         RequestDelegate next,
-        ILogger<ExceptionHandlingMiddleware> logger
-    )
+        ILogger<ExceptionHandlingMiddleware> logger)
     {
         _next = next;
         _logger = logger;
@@ -23,27 +22,37 @@ public sealed class ExceptionHandlingMiddleware
         {
             await _next(context);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhanled exception");
+            _logger.LogError(ex, "Unhandled exception");
+
+            var (statusCode, message) = MapException(ex);
 
             context.Response.ContentType = "application/json";
-
-            context.Response.StatusCode = ex switch
-            {
-                ArgumentException => StatusCodes.Status400BadRequest,
-                KeyNotFoundException => StatusCodes.Status404NotFound,
-                _ => StatusCodes.Status500InternalServerError
-            };
+            context.Response.StatusCode = statusCode;
 
             var response = new
             {
-                error = ex.Message
+                error = message
             };
 
             await context.Response.WriteAsync(
                 JsonSerializer.Serialize(response)
             );
         }
+    }
+
+    private static (int statusCode, string message) MapException(Exception exception)
+    {
+        return exception switch
+        {
+            UnauthorizedException => (StatusCodes.Status401Unauthorized, exception.Message),
+            ForbiddenException => (StatusCodes.Status403Forbidden, exception.Message),
+            ConflictException => (StatusCodes.Status409Conflict, exception.Message),
+            NotFoundException => (StatusCodes.Status404NotFound, exception.Message),
+            ArgumentException => (StatusCodes.Status400BadRequest, exception.Message),
+            KeyNotFoundException => (StatusCodes.Status404NotFound, exception.Message),
+            _ => (StatusCodes.Status500InternalServerError, "Internal server error")
+        };
     }
 }

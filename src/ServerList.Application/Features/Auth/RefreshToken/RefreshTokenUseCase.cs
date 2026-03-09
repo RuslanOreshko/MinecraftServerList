@@ -1,5 +1,6 @@
 using ServerList.Application.Abstractions.Persistance;
 using ServerList.Application.Abstractions.Security;
+using ServerList.Application.Common.Exceptions;
 using ServerList.Domain.Entities;
 
 namespace ServerList.Application.Features.Auth.RefreshTokens;
@@ -35,10 +36,10 @@ public sealed class RefreshTokenUseCase : IRefreshTokenUseCase
         var existigToken = await _refreshTokens.GetActiveByTokenHashAsync(incomingTokenHasher, ct);
 
         if(existigToken is null)   
-            throw new Exception("Invalid refresh token");
+            throw new UnauthorizedException("Invalid refresh token");
 
         if(existigToken.User.IsBlocked)
-            throw new Exception("User is blocked");
+            throw new ForbiddenException("User is blocked");
 
         var revokedAt = DateTime.UtcNow;
 

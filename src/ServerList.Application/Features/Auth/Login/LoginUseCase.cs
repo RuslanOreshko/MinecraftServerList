@@ -1,6 +1,7 @@
 using ServerList.Application.Abstractions.Persistance;
 using ServerList.Application.Abstractions.Security;
 using ServerList.Domain.Entities;
+using ServerList.Application.Common.Exceptions;
 
 namespace ServerList.Application.Features.Auth.Login;
 
@@ -38,15 +39,15 @@ public sealed class LoginUseCase : ILoginUseCase
         var user = await _users.GetByEmailWithRolesAsync(request.Email, ct);
 
         if (user is null)
-            throw new Exception("Invalid email or password");
+            throw new UnauthorizedException("Invalid email or password");
 
         if (user.IsBlocked)
-            throw new Exception("User is blocked");
+            throw new ForbiddenException("User is blocked");
         
         var passwordValid = _passwordHasher.Verify(request.Password, user.PasswordHash);
 
         if (!passwordValid)
-            throw new Exception("Invalid email or password");
+            throw new UnauthorizedException("Invalid email or password");
 
         var roles = user.UserRoles
             .Select(x => x.Role.Name)

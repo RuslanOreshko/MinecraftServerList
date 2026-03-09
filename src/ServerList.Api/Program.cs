@@ -3,7 +3,7 @@ using System.Text;
 using ServerList.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using ServerList.Api.middleware;
+using ServerList.Api.Middleware;
 using ServerList.Application;
 using ServerList.Infrastructure;
 using Microsoft.OpenApi.Models;

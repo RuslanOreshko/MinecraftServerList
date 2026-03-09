@@ -1,5 +1,6 @@
 using ServerList.Application.Abstractions.Persistance;
 using ServerList.Application.Abstractions.Security;
+using ServerList.Application.Common.Exceptions;
 using ServerList.Domain.Entities;
 
 namespace ServerList.Application.Features.Auth.Register;
@@ -30,12 +31,12 @@ public sealed class RegisterUseCase : IRegisterUseCase
         var emailExists = await _users.GetByEmailAsync(request.Email, ct);
 
         if (emailExists != null)
-            throw new Exception("Email alredy user.");
+            throw new ConflictException("Email alredy user.");
 
         var userNameExists = await _users.GetByUserNameAsync(request.UserName, ct);
 
         if (userNameExists != null)
-            throw new Exception("Username alredy user.");
+            throw new ConflictException("Username alredy user.");
 
         var passwordHash = _passwordHasher.Hash(request.Password);
 
@@ -54,7 +55,7 @@ public sealed class RegisterUseCase : IRegisterUseCase
         var role = await _roles.GetByNameAsync("User", ct);
 
         if(role == null)
-            throw new Exception("Role user not found");
+            throw new NotFoundException("Role user not found");
 
         user.UserRoles.Add(new UserRole
         {
