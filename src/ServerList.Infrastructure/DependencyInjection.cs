@@ -45,6 +45,8 @@ public static class DependencyInjection
         services.Configure<JwtOptions>(
             cfg.GetSection(JwtOptions.SectionName));
 
+        services.AddScoped<IRefreshTokenHasher, Sha256RefreshTokenHasher>(); 
+
         return services;
     }
 }

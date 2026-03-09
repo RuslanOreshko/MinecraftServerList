@@ -12,6 +12,7 @@ public sealed class LoginUseCase : ILoginUseCase
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IRefreshTokenGenerator _refreshTokenGenerator;
+    private readonly IRefreshTokenHasher _refreshTokenHasher;
 
     public LoginUseCase(
         IUserRepository users,
@@ -19,7 +20,8 @@ public sealed class LoginUseCase : ILoginUseCase
         IUnitOfWork uow,
         IPasswordHasher passwordHasher,
         IJwtTokenService jwtTokenService,
-        IRefreshTokenGenerator refreshTokenGenerator
+        IRefreshTokenGenerator refreshTokenGenerator,
+        IRefreshTokenHasher refreshTokenHasher
     )
     {
         _users = users;
@@ -28,6 +30,7 @@ public sealed class LoginUseCase : ILoginUseCase
         _passwordHasher = passwordHasher;
         _jwtTokenService = jwtTokenService;
         _refreshTokenGenerator = refreshTokenGenerator;
+        _refreshTokenHasher = refreshTokenHasher;
     }
 
     public async Task<LoginResult> ExecuteAsync(LoginRequest request, CancellationToken ct)
@@ -51,7 +54,7 @@ public sealed class LoginUseCase : ILoginUseCase
 
         var accessToken = _jwtTokenService.GenerateAccessToken(user, roles);
         var refreshTokenRaw = _refreshTokenGenerator.Generate();
-        var refreshTokenHash = _passwordHasher.Hash(refreshTokenRaw);
+        var refreshTokenHash = _refreshTokenHasher.Hash(refreshTokenRaw);
 
         var refreshToken = new RefreshToken
         {
