@@ -1,5 +1,6 @@
 using System.Drawing;
 using Microsoft.AspNetCore.Mvc;
+using ServerList.Application.Features.Auth.Login;
 using ServerList.Application.Features.Auth.Register;
 
 namespace ServerList.Api.Controllers;
@@ -10,12 +11,15 @@ namespace ServerList.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IRegisterUseCase _registerUseCase;
+    private readonly ILoginUseCase _loginUseCase;
 
     public AuthController(
-        IRegisterUseCase registerUseCase
+        IRegisterUseCase registerUseCase,
+        ILoginUseCase loginUserCase
     )
     {
         _registerUseCase = registerUseCase;
+        _loginUseCase = loginUserCase;
     }
 
     [HttpPost("register")]
@@ -25,6 +29,17 @@ public class AuthController : ControllerBase
     )
     {
         var result = await _registerUseCase.ExecuteAsync(request, ct);
+
+        return Ok(result);
+    }
+
+    [HttpPost("login")]
+    public async Task<ActionResult<LoginResult>> Login(
+        [FromBody] LoginRequest request,
+        CancellationToken ct
+    )
+    {
+        var result = await _loginUseCase.ExecuteAsync(request, ct);
 
         return Ok(result);
     }

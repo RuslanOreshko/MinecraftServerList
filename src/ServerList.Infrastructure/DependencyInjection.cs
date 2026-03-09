@@ -33,8 +33,17 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
 
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
         // password hasher 
         services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
+
+        // Jwt
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<IRefreshTokenGenerator, RefreshTokenGenerator>();
+
+        services.Configure<JwtOptions>(
+            cfg.GetSection(JwtOptions.SectionName));
 
         return services;
     }
