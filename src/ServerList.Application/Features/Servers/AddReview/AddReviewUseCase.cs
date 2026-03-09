@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using ServerList.Application.Abstractions.Persistance;
 using ServerList.Domain.Entities;
 

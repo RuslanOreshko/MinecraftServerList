@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using ServerList.Application.Abstractions.Persistance;
 using ServerList.Application.Abstractions.Security;
 using ServerList.Domain.Entities;
@@ -30,12 +29,12 @@ public sealed class RegisterUseCase : IRegisterUseCase
     {
         var emailExists = await _users.GetByEmailAsync(request.Email, ct);
 
-        if (emailExists is null)
-            throw new Exception("Email alredy used.");
+        if (emailExists != null)
+            throw new Exception("Email alredy user.");
 
         var userNameExists = await _users.GetByUserNameAsync(request.UserName, ct);
 
-        if (userNameExists is null)
+        if (userNameExists != null)
             throw new Exception("Username alredy user.");
 
         var passwordHash = _passwordHasher.Hash(request.Password);

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using ServerList.Application.Features.Auth.Register;
 using ServerList.Application.Features.Moderation.HideReview;
 using ServerList.Application.Features.Server.AddReview;
 using ServerList.Application.Features.Server.AddServer;
@@ -37,6 +38,10 @@ public static class DependencyInjection
         services.AddScoped<IAddReviewUseCase, AddReviewUseCase>();
         services.AddScoped<IHideReviewUseCase, HideReviewUseCase>();
         services.AddScoped<IGetServerReviewUseCase, GetServerReviewUseCase>();
+
+        // Auth use cases
+        // Register use case
+        services.AddScoped<IRegisterUseCase, RegisterUseCase>();
 
         return services;
     }

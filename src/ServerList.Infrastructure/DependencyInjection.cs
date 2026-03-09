@@ -2,9 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServerList.Application.Abstractions.Persistance;
+using ServerList.Application.Abstractions.Security;
 using ServerList.Domain.Entities;
 using ServerList.Infrastructure.Persistence;
 using ServerList.Infrastructure.Repositories;
+using ServerList.Infrastructure.Security;
 
 namespace ServerList.Infrastructure;
 
@@ -26,6 +28,13 @@ public static class DependencyInjection
 
         // Review repo
         services.AddScoped<IReviewRepository, ReviewRepository>();
+
+        // User and Role repo 
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+
+        // password hasher 
+        services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 
         return services;
     }
