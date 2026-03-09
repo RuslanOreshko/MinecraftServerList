@@ -1,9 +1,9 @@
 ```mermaid
 ---
 config:
-  theme: default
+  theme: neo-dark
   look: classic
-title: Sample title
+title: MinecraftServerList Architecture
 ---
 classDiagram
 direction TB
@@ -94,7 +94,7 @@ direction TB
         }
 
 	}
-	namespace DataBseModels {
+	namespace DatabaseModels {
         class Role {
 	        +Guid Id
 	        +string Name
@@ -103,6 +103,7 @@ direction TB
         class User {
 	        +Guid Id
 	        +string Email
+	        +string UserName
 	        +string PasswordHash
 	        +DateTime CreatedAt
 	        +bool IsBlocked
@@ -160,14 +161,14 @@ direction TB
 	        +DateTime UpdatedAt
         }
 
+	}
+	namespace DTOModels {
         class TokenPair {
 	        +string AccessToken
 	        +string RefreshToken
 	        +DateTime ExpiresAt
         }
 
-	}
-	namespace `DTO-models` {
         class ServerSearchFilter {
 	        +string? Country
 	        +string? Mode
@@ -189,39 +190,86 @@ direction TB
         }
 
 	}
+	namespace AuthUseCases {
+        class IRegisterUseCase {
+	        +RegisterResult ExecuteAsync(request, ct)
+        }
+
+        class RegisterUseCase {
+        }
+
+        class ILoginUseCase {
+	        +LoginResult ExecuteAsync(request, ct)
+        }
+
+        class LoginUseCase {
+        }
+
+        class IRefreshTokenUseCase {
+	        +RefreshTokenResult ExecuteAsync(request, ct)
+        }
+
+        class RefreshTokenUseCase {
+        }
+
+        class ILogoutUseCase {
+	        +ExecuteAsync(request, ct)
+        }
+
+        class LogoutUseCase {
+        }
+
+	}
+	namespace ServerUseCases {
+        class IAddServerUseCase {
+        }
+
+        class AddServerUseCase {
+        }
+
+        class ISearchServersUseCase {
+        }
+
+        class SearchServersUseCase {
+        }
+
+        class IRateServerUseCase {
+        }
+
+        class RateServerUseCase {
+        }
+
+        class IAddReviewUseCase {
+        }
+
+        class AddReviewUseCase {
+        }
+
+        class IGetServerReviewsUseCase {
+        }
+
+        class GetServerReviewsUseCase {
+        }
+
+	}
+	namespace ModerationUseCases {
+        class IApproveServerUseCase {
+        }
+
+        class ApproveServerUseCase {
+        }
+
+        class IHideReviewUseCase {
+        }
+
+        class HideReviewUseCase {
+        }
+
+	}
     class ServerStatus {
 	    Pending
 	    Online
 	    Offline
-    }
-
-    class IAuthService {
-	    +Guid Register(dto)
-	    +TokenPair Login(email, password, deviceInfo)
-	    +TokenPair Refresh(refreshToken)
-	    +void Logout(refreshToken)
-    }
-
-    class AuthService {
-    }
-
-    class IServerService {
-	    +Guid AddServer(dto, userId)
-	    +ServerDetailsDto GetServer(id, allowRefreshStatus)
-	    +PagedResult~ServerListItemDto~ Search(filter)
-	    +void Rate(serverId, userId, stars)
-	    +Guid AddReview(serverId, userId, text)
-    }
-
-    class ServerService {
-    }
-
-    class IModerationService {
-	    +void ApproveServer(serverId, moderatorId)
-	    +void HideReview(reviewId, moderatorId, reason)
-    }
-
-    class ModerationService {
     }
 
     class UnitOfWork {
@@ -242,10 +290,18 @@ direction TB
 	<<interface>> ICheckerFactory
 	<<interface>> IMinecraftServerChecker
 	<<interface>> ISevrverQueryPipeline
+	<<interface>> IRegisterUseCase
+	<<interface>> ILoginUseCase
+	<<interface>> IRefreshTokenUseCase
+	<<interface>> ILogoutUseCase
+	<<interface>> IAddServerUseCase
+	<<interface>> ISearchServersUseCase
+	<<interface>> IRateServerUseCase
+	<<interface>> IAddReviewUseCase
+	<<interface>> IGetServerReviewsUseCase
+	<<interface>> IApproveServerUseCase
+	<<interface>> IHideReviewUseCase
 	<<enumeration>> ServerStatus
-	<<interface>> IAuthService
-	<<interface>> IServerService
-	<<interface>> IModerationService
 
     User "1" --> "0..*" UserRole
     Role "1" --> "0..*" UserRole
@@ -255,9 +311,17 @@ direction TB
     User "1" --> "0..*" Rating
     GameServer "1" --> "0..*" Review
     User "1" --> "0..*" Review
-    IAuthService <|.. AuthService
-    IServerService <|.. ServerService
-    IModerationService <|.. ModerationService
+    IRegisterUseCase <|.. RegisterUseCase
+    ILoginUseCase <|.. LoginUseCase
+    IRefreshTokenUseCase <|.. RefreshTokenUseCase
+    ILogoutUseCase <|.. LogoutUseCase
+    IAddServerUseCase <|.. AddServerUseCase
+    ISearchServersUseCase <|.. SearchServersUseCase
+    IRateServerUseCase <|.. RateServerUseCase
+    IAddReviewUseCase <|.. AddReviewUseCase
+    IGetServerReviewsUseCase <|.. GetServerReviewsUseCase
+    IApproveServerUseCase <|.. ApproveServerUseCase
+    IHideReviewUseCase <|.. HideReviewUseCase
     IServerQueryStrategy <|.. FilterByCountryStrategy
     IServerQueryStrategy <|.. FilterByModeStrategy
     IServerQueryStrategy <|.. FilterByVersionStrategy
@@ -265,31 +329,39 @@ direction TB
     IServerQueryStrategy <|.. SortByRatingStrategy
     IServerQueryStrategy <|.. SortByOnlineStrategy
     IServerQueryStrategy <|.. SortByNewestStrategy
-    ServerService --> ServerQueryPipeline : uses
-    AuthService --> IUserRepository
-    AuthService --> IRefreshTokenRepository
-    AuthService --> IRoleRepository
-    AuthService --> UnitOfWork
-    ServerService --> IGameServerRepository
-    ServerService --> IRatingRepository
-    ServerService --> IReviewRepository
-    ServerService --> UnitOfWork
-    ModerationService --> IGameServerRepository
-    ModerationService --> IReviewRepository
-    ModerationService --> UnitOfWork
+    RegisterUseCase --> IUserRepository
+    RegisterUseCase --> IRoleRepository
+    RegisterUseCase --> UnitOfWork
+    LoginUseCase --> IUserRepository
+    LoginUseCase --> IRefreshTokenRepository
+    LoginUseCase --> UnitOfWork
+    RefreshTokenUseCase --> IRefreshTokenRepository
+    RefreshTokenUseCase --> IUserRepository
+    RefreshTokenUseCase --> UnitOfWork
+    LogoutUseCase --> IRefreshTokenRepository
+    LogoutUseCase --> UnitOfWork
+    AddServerUseCase --> IGameServerRepository
+    AddServerUseCase --> UnitOfWork
+    SearchServersUseCase --> IGameServerRepository
+    SearchServersUseCase --> ServerQueryPipeline
+    RateServerUseCase --> IRatingRepository
+    RateServerUseCase --> UnitOfWork
+    AddReviewUseCase --> IReviewRepository
+    AddReviewUseCase --> UnitOfWork
+    GetServerReviewsUseCase --> IReviewRepository
+    ApproveServerUseCase --> IGameServerRepository
+    ApproveServerUseCase --> UnitOfWork
+    HideReviewUseCase --> IReviewRepository
+    HideReviewUseCase --> UnitOfWork
     ICheckerFactory <|.. CheckerFactory
-    ServerStatusUpdaterJob --> IGameServerRepository
-    ServerStatusUpdaterJob --> ICheckerFactory
-    ServerStatusUpdaterJob --> UnitOfWork
     IMinecraftServerChecker <|.. JavaServerChecker
     CheckerFactory ..> IMinecraftServerChecker : Create()
     IMinecraftServerChecker --> ServerCheckResult : Check()
+    ServerStatusUpdaterJob --> IGameServerRepository
+    ServerStatusUpdaterJob --> ICheckerFactory
+    ServerStatusUpdaterJob --> UnitOfWork
     ServerStatusUpdaterJob ..> ServerCheckResult : uses
     ServerQueryPipeline ..|> ISevrverQueryPipeline
-
-	style SortByNewestStrategy :,stroke-width4px
-
-	style ServerQueryPipeline :,stroke-width2px
 
 	class IGameServerRepository:::Class_04
 	class IRatingRepository:::Class_04
@@ -317,23 +389,18 @@ direction TB
 	class Review:::Rose
 	class UserRole:::Rose
 	class Rating:::Rose
-	class TokenPair:::Rose
+	class TokenPair:::Class_05
 	class ServerSearchFilter:::Class_05
 	class ServerQueryPipeline:::Class_07
 	class ISevrverQueryPipeline:::Class_07
 	class ServerStatus:::Ash
 
-	classDef Aqua :,stroke-width:1px,stroke-dasharray:none,stroke:#46EDC8,fill:#DEFFF8,color:#378E7A,stroke-width:1px,stroke-dasharray:none,stroke:#46EDC8,fill:#DEFFF8,color:#378E7A,stroke-width:1px,stroke-dasharray:none,stroke:#46EDC8,fill:#DEFFF8,color:#378E7A
-	classDef Pine :,stroke-width:1px,stroke-dasharray:none,stroke:#254336,fill:#27654A,color:#FFFFFF,stroke-width:1px,stroke-dasharray:none,stroke:#254336,fill:#27654A,color:#FFFFFF,stroke-width:1px,stroke-dasharray:none,stroke:#254336,fill:#27654A,color:#FFFFFF
-	classDef Class_01 :,stroke-width:4px,stroke-dasharray:0,stroke-width:4px,stroke-dasharray:0,stroke-width:4px,stroke-dasharray:0,stroke-width:4px,stroke-dasharray:0,stroke:#C8E6C9,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,stroke:#C8E6C9,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,stroke:#C8E6C9,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,stroke:#C8E6C9,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,stroke:#C8E6C9,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,stroke:#C8E6C9,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,stroke:#C8E6C9,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,stroke:#C8E6C9,fill:#FFE0B2
-	classDef Peach :,stroke-width:1px,stroke-dasharray:none,stroke:#FBB35A,fill:#FFEFDB,color:#8F632D,stroke-width:1px,stroke-dasharray:none,stroke:#FBB35A,fill:#FFEFDB,color:#8F632D
-	classDef Rose :,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236,stroke-width:1px,stroke-dasharray:none,stroke:#FF5978,fill:#FFDFE5,color:#8E2236
-	classDef Ash :,stroke-width:1px,stroke-dasharray:none,stroke:#999999,fill:#EEEEEE,color:#000000
-	classDef Sky :,stroke-width:1px,stroke-dasharray:none,stroke:#374D7C,fill:#E2EBFF,color:#374D7C
-	classDef Class_02 :,stroke-width:4px,stroke-dasharray:0,stroke:#2962FF,fill:#BBDEFB,stroke-width:4px,stroke-dasharray:0,stroke:#2962FF,fill:#BBDEFB,stroke-width:4px,stroke-dasharray:0,stroke:#2962FF,fill:#BBDEFB,stroke-width:4px,stroke-dasharray:0,stroke:#2962FF,fill:#BBDEFB,stroke-width:4px,stroke-dasharray:0,stroke:#2962FF,fill:#BBDEFB,stroke-width:4px,stroke-dasharray:0,stroke:#2962FF,fill:#BBDEFB
-	classDef Class_03 :,stroke-width:4px,stroke-dasharray:0,stroke:#E1BEE7,fill:#FFCDD2,stroke-width:4px,stroke-dasharray:0,stroke:#E1BEE7,fill:#FFCDD2,stroke-width:4px,stroke-dasharray:0,stroke:#E1BEE7,fill:#FFCDD2
-	classDef Class_04 :,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2,stroke-width:4px,stroke-dasharray:0,fill:#FFE0B2
-	classDef Class_05 :,stroke-width:4px,stroke-dasharray:5,stroke:#000000,fill:#C8E6C9,stroke-width:4px,stroke-dasharray:5,stroke:#000000,fill:#C8E6C9
-	classDef Class_06 :,stroke-width:2px,stroke-dasharray:0,stroke:#999999,fill:#FF6D00,color:#000000,stroke-width:2px,stroke-dasharray:0,stroke:#999999,fill:#FF6D00,color:#000000,stroke-width:2px,stroke-dasharray:0,stroke:#999999,fill:#FF6D00,color:#000000,stroke-width:2px,stroke-dasharray:0,stroke:#999999,fill:#FF6D00,color:#000000
-	classDef Class_07 :,stroke-width:2px,stroke-dasharray:0,fill:#C8E6C9,color:#000000,stroke-width:2px,stroke-dasharray:0,fill:#C8E6C9,color:#000000,stroke-width:2px,stroke-dasharray:0,fill:#C8E6C9,color:#000000
+	classDef Pine :,fill:#27654A,stroke:#254336,color:#FFFFFF,stroke-width:1px
+	classDef Class_01 :,fill:#FFE0B2,stroke:#C8E6C9,color:#000000,stroke-width:4px
+	classDef Rose :,fill:#FFDFE5,stroke:#FF5978,color:#8E2236,stroke-width:1px
+	classDef Ash :,fill:#EEEEEE,stroke:#999999,color:#000000,stroke-width:1px
+	classDef Class_02 :,fill:#BBDEFB,stroke:#2962FF,color:#000000,stroke-width:4px
+	classDef Class_04 :,fill:#FFE0B2,stroke:#AA00FF,color:#000000,stroke-width:4px
+	classDef Class_05 :,fill:#C8E6C9,stroke:#000000,color:#000000,stroke-width:4px,stroke-dasharray:5,fill:#C8E6C9,stroke:#000000,color:#000000,stroke-width:4px,stroke-dasharray:5
+	classDef Class_07 :,fill:#C8E6C9,color:#000000,stroke-width:2px
 ```

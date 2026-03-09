@@ -6,12 +6,49 @@ using Microsoft.IdentityModel.Tokens;
 using ServerList.Api.middleware;
 using ServerList.Application;
 using ServerList.Infrastructure;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddOpenApi();
 builder.Services.AddControllers();
+
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
+
+        document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Description = "Enter JWT Bearer token"
+        };
+
+        document.SecurityRequirements.Add(new OpenApiSecurityRequirement
+        {
+            [
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                }
+            ] = Array.Empty<string>()
+        });
+
+        return Task.CompletedTask;
+    });
+});
+
+
 
 // Build in other DI
 builder.Services.AddApplication();

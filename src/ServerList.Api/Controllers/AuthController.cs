@@ -1,4 +1,6 @@
 using System.Drawing;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServerList.Application.Features.Auth.Login;
 using ServerList.Application.Features.Auth.RefreshTokens;
@@ -57,5 +59,23 @@ public class AuthController : ControllerBase
         var result = await _refreshTokenUseCase.ExecuteAsync(request, ct);
 
         return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public IActionResult Me()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var email = User.FindFirstValue(ClaimTypes.Email);
+        var userName = User.FindFirstValue(ClaimTypes.Name);
+        var roles = User.FindAll(ClaimTypes.Role).Select(x => x.Value).ToArray();
+
+        return Ok(new
+        {
+            UserId = userId,
+            Email = email,
+            UserName = userName,
+            Roles = roles
+        });
     }
 }
