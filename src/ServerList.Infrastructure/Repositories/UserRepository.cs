@@ -29,6 +29,14 @@ public sealed class UserRepository : IUserRepository
             .FirstOrDefaultAsync(x => x.UserName == userName, ct);
     }
 
+    public async Task<User?> GetByEmailWithRolesAsync(string email, CancellationToken ct)
+    {
+        return await _db.Users
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .FirstOrDefaultAsync(x => x.Email == email, ct);
+    }
+
     public async Task AddAsync(User user, CancellationToken ct)
     {
         await _db.Users.AddAsync(user);
