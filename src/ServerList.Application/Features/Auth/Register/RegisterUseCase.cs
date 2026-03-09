@@ -8,13 +8,13 @@ namespace ServerList.Application.Features.Auth.Register;
 
 public sealed class RegisterUseCase : IRegisterUseCase
 {
-    private readonly IUseRepository _users;
+    private readonly IUserRepository _users;
     private readonly IRoleRepository _roles;
     private readonly IUnitOfWork _uow;
     private readonly IPasswordHasher _passwordHasher;
 
     public RegisterUseCase(
-        IUseRepository users,
+        IUserRepository users,
         IRoleRepository roles,
         IUnitOfWork uow,
         IPasswordHasher passwordHasher

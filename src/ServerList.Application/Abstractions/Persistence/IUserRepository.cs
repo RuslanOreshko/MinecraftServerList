@@ -3,7 +3,7 @@ using ServerList.Domain.Entities;
 namespace ServerList.Application.Abstractions.Persistance;
 
 
-public interface IUseRepository
+public interface IUserRepository
 {
     Task<User?> GetByEmailAsync(string email, CancellationToken ct);
     Task<User?> GetByUserNameAsync(string userName, CancellationToken ct);
