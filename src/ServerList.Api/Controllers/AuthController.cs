@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServerList.Application.Features.Auth.Login;
+using ServerList.Application.Features.Auth.Logout;
 using ServerList.Application.Features.Auth.RefreshTokens;
 using ServerList.Application.Features.Auth.Register;
 
@@ -16,16 +17,19 @@ public class AuthController : ControllerBase
     private readonly IRegisterUseCase _registerUseCase;
     private readonly ILoginUseCase _loginUseCase;
     private readonly IRefreshTokenUseCase _refreshTokenUseCase;
+    private readonly ILogoutUseCase _logoutUseCase;
 
     public AuthController(
         IRegisterUseCase registerUseCase,
         ILoginUseCase loginUserCase,
-        IRefreshTokenUseCase refreshTokenUseCase
+        IRefreshTokenUseCase refreshTokenUseCase,
+        ILogoutUseCase logoutUseCase
     )
     {
         _registerUseCase = registerUseCase;
         _loginUseCase = loginUserCase;
         _refreshTokenUseCase = refreshTokenUseCase;
+        _logoutUseCase = logoutUseCase;
     }
 
     [HttpPost("register")]
@@ -77,5 +81,16 @@ public class AuthController : ControllerBase
             UserName = userName,
             Roles = roles
         });
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout(
+        [FromBody] LogoutRequest request,
+        CancellationToken ct
+    )
+    {
+        await _logoutUseCase.ExecuteAsync(request, ct);
+
+        return NoContent();
     }
 }

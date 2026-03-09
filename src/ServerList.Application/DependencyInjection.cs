@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using ServerList.Application.Features.Auth.Login;
+using ServerList.Application.Features.Auth.Logout;
 using ServerList.Application.Features.Auth.RefreshTokens;
 using ServerList.Application.Features.Auth.Register;
 using ServerList.Application.Features.Moderation.HideReview;
@@ -50,6 +51,9 @@ public static class DependencyInjection
         
         // RefreshToken
         services.AddScoped<IRefreshTokenUseCase, RefreshTokenUseCase>();
+
+        // Logout
+        services.AddScoped<ILogoutUseCase, LogoutUseCase>();
 
         return services;
     }
