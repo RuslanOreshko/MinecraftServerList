@@ -119,8 +119,6 @@ public sealed class ServerController : ControllerBase
     }
 
 
-
-
     [HttpGet("test-chek")]
     public async Task<IActionResult> TestCheck(
         [FromQuery] string ip,

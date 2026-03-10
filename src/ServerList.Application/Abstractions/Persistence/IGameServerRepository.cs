@@ -11,5 +11,6 @@ public interface IGameServerRepository
     IQueryable<GameServer> Query();
 
     Task<GameServer?> GetByIdAsync(Guid id, CancellationToken ct);
+    Task<List<GameServer>> GetApprovedAsync(CancellationToken ct);
     void Update(GameServer server);
 } 

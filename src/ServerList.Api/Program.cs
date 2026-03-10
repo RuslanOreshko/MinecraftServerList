@@ -7,6 +7,7 @@ using ServerList.Api.Middleware;
 using ServerList.Application;
 using ServerList.Infrastructure;
 using Microsoft.OpenApi.Models;
+using ServerList.Infrastructure.Background;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,7 @@ builder.Services.AddOpenApi(options =>
 });
 
 
+builder.Services.AddHostedService<ServerStatusUpdaterJob>();
 
 // Build in other DI
 builder.Services.AddApplication();

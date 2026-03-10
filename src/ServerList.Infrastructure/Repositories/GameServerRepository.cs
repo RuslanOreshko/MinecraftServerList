@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ServerList.Domain.Entities;
 using ServerList.Application.Abstractions.Persistance;
 using ServerList.Infrastructure.Persistence;
+using ServerList.Domain.Enums;
 
 namespace ServerList.Infrastructure.Repositories;
 
@@ -21,6 +22,13 @@ public sealed class GameServerRepository : IGameServerRepository
 
     public Task<GameServer?> GetByIdAsync(Guid id, CancellationToken  ct) 
         => _db.GameServers.FirstOrDefaultAsync(x => x.Id == id, ct);
+
+    public async Task<List<GameServer>> GetApprovedAsync(CancellationToken ct)
+    {
+        return await _db.GameServers
+            .Where(x => x.ModerationStatus == ModerationStatus.Approved)
+            .ToListAsync();
+    }
 
     public void Update(GameServer server) 
         => _db.GameServers.Update(server);
