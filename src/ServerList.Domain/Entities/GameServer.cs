@@ -19,7 +19,9 @@ public class GameServer
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public Guid CreatedByUserId { get; set; }
 
-    public ServerStatus Status { get; set; } = ServerStatus.Pending;
+    public ServerStatus ServerStatus { get; set; } = ServerStatus.Unknovn;
+    public ModerationStatus ModerationStatus { get; set; } = ModerationStatus.Pending;
+
     public int OnlinePlayers { get; set; } 
     public DateTime? LastCheckAt { get; set; }
 

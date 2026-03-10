@@ -16,6 +16,16 @@ public sealed class GameServerConfiguration : IEntityTypeConfiguration<GameServe
         b.Property(x => x.Ip).IsRequired().HasMaxLength(64);
 
         b.HasIndex(x => new { x.Ip, x.Port }).IsUnique();
+
+        b.Property(x => x.ServerStatus)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasMaxLength(32);
+
+        b.Property(x => x.ModerationStatus)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasMaxLength(32);
     }
 }
 

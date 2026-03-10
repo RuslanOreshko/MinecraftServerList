@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ServerList.Application.Features.Moderation.HideReview;
+using ServerList.Application.Features.Moderation.GetPending;
 
 namespace ServerList.Api.Controllers;
 
@@ -9,12 +10,15 @@ namespace ServerList.Api.Controllers;
 public sealed class ModerationController : ControllerBase
 {
     private readonly IHideReviewUseCase _hideReview;
+    private readonly IGetPendindUseCase _getPendingUseCase;
 
     public ModerationController(
-        IHideReviewUseCase hideReview
+        IHideReviewUseCase hideReview,
+        IGetPendindUseCase getPendindUseCase
     )
     {
         _hideReview = hideReview;
+        _getPendingUseCase = getPendindUseCase;
     }
 
     [HttpPatch("reviews/{id:guid}/hide")]
@@ -32,6 +36,16 @@ public sealed class ModerationController : ControllerBase
             fakeModeratorId,
             ct
         );
+
+        return Ok(result);
+    }
+
+    [HttpGet("server/pending")]
+    public async Task<ActionResult<PendingServerResult>> GetPending(
+        CancellationToken ct
+    )
+    {
+        var result = await _getPendingUseCase.ExecuteAsync(ct);
 
         return Ok(result);
     }

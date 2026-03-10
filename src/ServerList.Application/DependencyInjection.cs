@@ -3,6 +3,7 @@ using ServerList.Application.Features.Auth.Login;
 using ServerList.Application.Features.Auth.Logout;
 using ServerList.Application.Features.Auth.RefreshTokens;
 using ServerList.Application.Features.Auth.Register;
+using ServerList.Application.Features.Moderation.GetPending;
 using ServerList.Application.Features.Moderation.HideReview;
 using ServerList.Application.Features.Server.AddReview;
 using ServerList.Application.Features.Server.AddServer;
@@ -54,6 +55,10 @@ public static class DependencyInjection
 
         // Logout
         services.AddScoped<ILogoutUseCase, LogoutUseCase>();
+
+        // Moderation
+        // get pandind status server
+        services.AddScoped<IGetPendindUseCase, GetPendingUseCase>();
 
         return services;
     }

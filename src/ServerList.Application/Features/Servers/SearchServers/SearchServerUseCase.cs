@@ -38,7 +38,7 @@ public sealed class SearchServerUseCase : ISearchServerUseCase
             .Select(x => new ServerListItemDto(
                 x.Id, x.Name, x.Ip, x.Port,
                 x.Country, x.Mode, x.Version,
-                x.Status, x.OnlinePlayers,
+                x.ServerStatus, x.OnlinePlayers,
                 x.AverageRating, x.RatingCount
             ))
             .ToListAsync();
