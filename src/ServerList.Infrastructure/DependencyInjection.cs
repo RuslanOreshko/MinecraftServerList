@@ -1,12 +1,15 @@
+using System.Text.Encodings.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ServerList.Application.Abstractions.Persistance;
 using ServerList.Application.Abstractions.Security;
+using ServerList.Application.Abstractions.Services;
 using ServerList.Domain.Entities;
 using ServerList.Infrastructure.Persistence;
 using ServerList.Infrastructure.Repositories;
 using ServerList.Infrastructure.Security;
+using ServerList.Infrastructure.Services.Minecraft;
 
 namespace ServerList.Infrastructure;
 
@@ -46,6 +49,10 @@ public static class DependencyInjection
             cfg.GetSection(JwtOptions.SectionName));
 
         services.AddScoped<IRefreshTokenHasher, Sha256RefreshTokenHasher>(); 
+
+        // Fabric method
+        services.AddScoped<IMinecraftServerCheker, JavaServerChecker>();
+        services.AddScoped<ICheckerFactory, CheckerFactory>();
 
         return services;
     }

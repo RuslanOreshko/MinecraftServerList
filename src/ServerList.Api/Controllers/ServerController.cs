@@ -9,6 +9,7 @@ using ServerList.Application.Features.Server.GetServerReviews;
 using Microsoft.AspNetCore.Authorization;
 using ServerList.Api.Common.Extensions;
 using ServerList.Infrastructure.Services.Minecraft;
+using ServerList.Application.Abstractions.Services;
 
 
 namespace ServerList.Api.Controllers;
@@ -23,6 +24,7 @@ public sealed class ServerController : ControllerBase
     private readonly IRateServerUseCase _rateServer;
     private readonly IAddReviewUseCase _addReview;
     private readonly IGetServerReviewUseCase _getReviews;
+    private readonly ICheckerFactory _checkerFactory;
 
     public ServerController
     (
@@ -30,7 +32,8 @@ public sealed class ServerController : ControllerBase
         ISearchServerUseCase searchServers,
         IRateServerUseCase rateServer,
         IAddReviewUseCase addReview,
-        IGetServerReviewUseCase getReviews
+        IGetServerReviewUseCase getReviews,
+        ICheckerFactory checkerFactory
     )
     {
         _useCase = useCase;
@@ -38,6 +41,7 @@ public sealed class ServerController : ControllerBase
         _rateServer =  rateServer;
         _addReview = addReview;
         _getReviews = getReviews;
+        _checkerFactory = checkerFactory;
     }
 
     [Authorize]
@@ -124,9 +128,9 @@ public sealed class ServerController : ControllerBase
         CancellationToken ct
     )
     {
-        var cheker = new JavaServerChecker();
+        var checker = _checkerFactory.Create();
 
-        var result = await cheker.CheckAsync(ip, port, ct);
+        var result = await checker.CheckAsync(ip, port, ct);
 
         return Ok(result);
     }
