@@ -6,6 +6,7 @@ using ServerList.Application.Features.Auth.Register;
 using ServerList.Application.Features.Moderation.ApprovedServer;
 using ServerList.Application.Features.Moderation.GetPending;
 using ServerList.Application.Features.Moderation.HideReview;
+using ServerList.Application.Features.Moderation.RejectedServer;
 using ServerList.Application.Features.Server.AddReview;
 using ServerList.Application.Features.Server.AddServer;
 using ServerList.Application.Features.Server.GetServerReviews;
@@ -67,6 +68,9 @@ public static class DependencyInjection
 
         // Appove ModerationStatus to Approved
         services.AddScoped<IApprovedServerUseCase, ApprovedServerUseCase>();
+
+        // Reject ModerationStatus to Rejected
+        services.AddScoped<IRejectedUsecCase, RejectedUseCase>();
 
         return services;
     }

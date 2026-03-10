@@ -3,6 +3,7 @@ using ServerList.Application.Features.Moderation.HideReview;
 using ServerList.Application.Features.Moderation.GetPending;
 using ServerList.Application.Features.Moderation.ApprovedServer;
 using Microsoft.AspNetCore.Authorization;
+using ServerList.Application.Features.Moderation.RejectedServer;
 
 namespace ServerList.Api.Controllers;
 
@@ -14,16 +15,19 @@ public sealed class ModerationController : ControllerBase
     private readonly IHideReviewUseCase _hideReview;
     private readonly IGetPendindUseCase _getPendingUseCase;
     private readonly IApprovedServerUseCase _approveServerUseCase;
+    private readonly IRejectedUsecCase _rejectedUsecCase;
 
     public ModerationController(
         IHideReviewUseCase hideReview,
         IGetPendindUseCase getPendindUseCase,
-        IApprovedServerUseCase approvedServerUseCase
+        IApprovedServerUseCase approvedServerUseCase,
+        IRejectedUsecCase rejectedUsecCase
     )
     {
         _hideReview = hideReview;
         _getPendingUseCase = getPendindUseCase;
         _approveServerUseCase = approvedServerUseCase;
+        _rejectedUsecCase = rejectedUsecCase;
     }
 
     [Authorize(Roles = "Admin,Moderator")]
@@ -65,4 +69,14 @@ public sealed class ModerationController : ControllerBase
 
         return NoContent();
     }
+
+    [Authorize(Roles = "Admin,Moderator")]
+    [HttpPost("server/{id:guid}/reject")]
+    public async Task<ActionResult> RejectServer(Guid id, CancellationToken ct)
+    {
+        await _rejectedUsecCase.ExecuteAsync(id, ct);
+
+        return NoContent();
+    }
+
 }
