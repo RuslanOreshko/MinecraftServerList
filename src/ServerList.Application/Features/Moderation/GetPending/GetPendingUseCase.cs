@@ -5,7 +5,7 @@ using ServerList.Domain.Enums;
 namespace ServerList.Application.Features.Moderation.GetPending;
 
 
-public sealed class GetPendingUseCase : IGetPendindUseCase
+public sealed class GetPendingUseCase : IGetPendingUseCase
 {
     private readonly IGameServerRepository _gameServerRepo;
 

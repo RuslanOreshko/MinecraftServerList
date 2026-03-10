@@ -5,9 +5,9 @@ using ServerList.Application.Features.Server.SearchServers;
 using ServerList.Application.Features.Server.RateServer;
 using ServerList.Application.Features.Server.SearchServers.Abstractions;
 using ServerList.Application.Features.Server.AddReview;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using ServerList.Application.Features.Server.GetServerReviews;
-using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
+using ServerList.Api.Common.Extensions;
 
 
 namespace ServerList.Api.Controllers;
@@ -39,11 +39,12 @@ public sealed class ServerController : ControllerBase
         _getReviews = getReviews;
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<AddServerResult>> Add(AddServerRequest request, CancellationToken ct)
     {
-        var faceUserId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-        var result = await _useCase.ExecuteAsync(request, faceUserId, ct);
+        var userId = User.GetUserId();
+        var result = await _useCase.ExecuteAsync(request, userId, ct);
         return Ok(result);
     }
 
@@ -59,18 +60,20 @@ public sealed class ServerController : ControllerBase
         return Ok(result);
     }
 
+    // Rating server
+    [Authorize]
     [HttpPost("{id:guid}/rating")]
     public async Task<ActionResult<RateServerResult>> Rate(
         Guid id,
         [FromBody] RateServerRequest request,
         CancellationToken ct)
     {
-        var fakeUserId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        var userId = User.GetUserId();
 
         var result = await _rateServer.ExecuteAsync(
             id,
             request.Stars,
-            fakeUserId,
+            userId,
             ct
         );
 
@@ -78,6 +81,7 @@ public sealed class ServerController : ControllerBase
     }
 
     // Add Review to server
+    [Authorize]
     [HttpPost("{id:guid}/reviews")]
     public async Task<ActionResult<AddReviewResult>> AddReview(
         Guid id,
@@ -85,12 +89,12 @@ public sealed class ServerController : ControllerBase
         CancellationToken ct
     )
     {
-        var fakeUserId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        var userId = User.GetUserId();
 
         var result = await _addReview.ExecuteAsync(
             id,
             request.Text,
-            fakeUserId,
+            userId,
             ct
         );
 

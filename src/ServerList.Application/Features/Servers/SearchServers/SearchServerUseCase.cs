@@ -28,7 +28,9 @@ public sealed class SearchServerUseCase : ISearchServerUseCase
 
         query = _pipeline.ApplyAll(query, filter);
 
-        var total = await query.CountAsync(ct);
+        var total = await query
+            .Where(x => x.ModerationStatus == ModerationStatus.Approved)
+            .CountAsync(ct);
 
         var page = filter.Page < 1 ? 1 : filter.Page;
         var size = filter.PageSize is < 1 or > 50 ? 20 : filter.PageSize;

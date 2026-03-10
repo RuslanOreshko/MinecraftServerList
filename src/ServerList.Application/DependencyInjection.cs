@@ -61,7 +61,7 @@ public static class DependencyInjection
 
         // Moderation
         // get pandind status server
-        services.AddScoped<IGetPendindUseCase, GetPendingUseCase>();
+        services.AddScoped<IGetPendingUseCase, GetPendingUseCase>();
 
         // Hide review
         services.AddScoped<IHideReviewUseCase, HideReviewUseCase>();

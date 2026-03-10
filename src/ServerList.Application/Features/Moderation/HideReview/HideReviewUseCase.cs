@@ -20,7 +20,6 @@ public sealed class HideReviewUseCase : IHideReviewUseCase
     public async Task<HideReviewResult> ExecuteAsync(
         Guid reviewId,
         string reason,
-        Guid moderatorId,
         CancellationToken ct
     )
     {
@@ -33,7 +32,6 @@ public sealed class HideReviewUseCase : IHideReviewUseCase
 
         review.IsHidden = true;
         review.HiddenReason = reason;
-        review.HiddenByModeratorId = moderatorId;
         review.UpdateAt = DateTime.UtcNow;
 
         _reviews.Update(review);

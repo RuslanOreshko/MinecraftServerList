@@ -6,7 +6,6 @@ public interface IHideReviewUseCase
     Task<HideReviewResult> ExecuteAsync(
         Guid reviewId,
         string reason,
-        Guid moderatorId,
         CancellationToken ct
     );
 }

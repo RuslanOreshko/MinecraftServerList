@@ -13,13 +13,13 @@ namespace ServerList.Api.Controllers;
 public sealed class ModerationController : ControllerBase
 {
     private readonly IHideReviewUseCase _hideReview;
-    private readonly IGetPendindUseCase _getPendingUseCase;
+    private readonly IGetPendingUseCase _getPendingUseCase;
     private readonly IApprovedServerUseCase _approveServerUseCase;
     private readonly IRejectedUsecCase _rejectedUsecCase;
 
     public ModerationController(
         IHideReviewUseCase hideReview,
-        IGetPendindUseCase getPendindUseCase,
+        IGetPendingUseCase getPendindUseCase,
         IApprovedServerUseCase approvedServerUseCase,
         IRejectedUsecCase rejectedUsecCase
     )
@@ -38,12 +38,9 @@ public sealed class ModerationController : ControllerBase
         CancellationToken ct
     )
     {
-        var fakeModeratorId = Guid.Parse("22222222-2222-2222-2222-222222222222");
-
         var result = await _hideReview.ExecuteAsync(
             id,
             request.Reason,
-            fakeModeratorId,
             ct
         );
 
@@ -51,7 +48,7 @@ public sealed class ModerationController : ControllerBase
     }
 
     [Authorize(Roles = "Admin,Moderator")]
-    [HttpGet("server/pending")]
+    [HttpGet("servers/pending")]
     public async Task<ActionResult<PendingServerResult>> GetPending(
         CancellationToken ct
     )
@@ -62,7 +59,7 @@ public sealed class ModerationController : ControllerBase
     }
 
     [Authorize(Roles = "Admin,Moderator")]
-    [HttpPost("server/{id:guid}/approve")]
+    [HttpPost("servers/{id:guid}/approve")]
     public async Task<ActionResult> ApproveServer(Guid id, CancellationToken ct)
     {
         await _approveServerUseCase.ExecuteAsync(id, ct);
@@ -71,7 +68,7 @@ public sealed class ModerationController : ControllerBase
     }
 
     [Authorize(Roles = "Admin,Moderator")]
-    [HttpPost("server/{id:guid}/reject")]
+    [HttpPost("servers/{id:guid}/reject")]
     public async Task<ActionResult> RejectServer(Guid id, CancellationToken ct)
     {
         await _rejectedUsecCase.ExecuteAsync(id, ct);
