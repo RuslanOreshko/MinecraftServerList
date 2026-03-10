@@ -3,6 +3,7 @@ using ServerList.Application.Features.Auth.Login;
 using ServerList.Application.Features.Auth.Logout;
 using ServerList.Application.Features.Auth.RefreshTokens;
 using ServerList.Application.Features.Auth.Register;
+using ServerList.Application.Features.Moderation.ApprovedServer;
 using ServerList.Application.Features.Moderation.GetPending;
 using ServerList.Application.Features.Moderation.HideReview;
 using ServerList.Application.Features.Server.AddReview;
@@ -40,8 +41,8 @@ public static class DependencyInjection
 
         // review use case DI
         services.AddScoped<IAddReviewUseCase, AddReviewUseCase>();
-        services.AddScoped<IHideReviewUseCase, HideReviewUseCase>();
         services.AddScoped<IGetServerReviewUseCase, GetServerReviewUseCase>();
+
 
         // Auth use cases
         // Register use case
@@ -56,9 +57,16 @@ public static class DependencyInjection
         // Logout
         services.AddScoped<ILogoutUseCase, LogoutUseCase>();
 
+
         // Moderation
         // get pandind status server
         services.AddScoped<IGetPendindUseCase, GetPendingUseCase>();
+
+        // Hide review
+        services.AddScoped<IHideReviewUseCase, HideReviewUseCase>();
+
+        // Appove ModerationStatus to Approved
+        services.AddScoped<IApprovedServerUseCase, ApprovedServerUseCase>();
 
         return services;
     }
