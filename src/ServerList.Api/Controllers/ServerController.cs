@@ -8,6 +8,7 @@ using ServerList.Application.Features.Server.AddReview;
 using ServerList.Application.Features.Server.GetServerReviews;
 using Microsoft.AspNetCore.Authorization;
 using ServerList.Api.Common.Extensions;
+using ServerList.Infrastructure.Services.Minecraft;
 
 
 namespace ServerList.Api.Controllers;
@@ -109,6 +110,23 @@ public sealed class ServerController : ControllerBase
     )
     {
         var result = await _getReviews.ExecuteAsync(id, filter, ct);
+
+        return Ok(result);
+    }
+
+
+
+
+    [HttpGet("test-chek")]
+    public async Task<IActionResult> TestCheck(
+        [FromQuery] string ip,
+        [FromQuery] int port,
+        CancellationToken ct
+    )
+    {
+        var cheker = new JavaServerChecker();
+
+        var result = await cheker.CheckAsync(ip, port, ct);
 
         return Ok(result);
     }
