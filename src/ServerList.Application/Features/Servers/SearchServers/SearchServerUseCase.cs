@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ServerList.Application.Abstractions.Persistance;
 using ServerList.Application.Common.Pagination;
 using ServerList.Application.Features.Server.SearchServers.Abstractions;
+using ServerList.Domain.Enums;
 
 
 namespace ServerList.Application.Features.Server.SearchServers;
@@ -33,6 +34,7 @@ public sealed class SearchServerUseCase : ISearchServerUseCase
         var size = filter.PageSize is < 1 or > 50 ? 20 : filter.PageSize;
 
         var items = await query
+            .Where(x => x.ModerationStatus == ModerationStatus.Approved)
             .Skip((page - 1) * size)
             .Take(size)
             .Select(x => new ServerListItemDto(
