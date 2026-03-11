@@ -256,6 +256,12 @@ direction TB
         class IApproveServerUseCase {
         }
 
+        class IRejecteServerUseCase {
+        }
+
+        class RejecteServerUseCase {
+        }
+
         class ApproveServerUseCase {
         }
 
@@ -272,14 +278,14 @@ direction TB
 	    Offline
     }
 
-    class UnitOfWork {
+    class IUnitOfWork {
 	    +SaveChanges()
     }
 
     class ServerStatusUpdaterJob {
 	    +Run()
     }
-
+        <<interface>> IUnitOfWork
 	<<interface>> IGameServerRepository
 	<<interface>> IRatingRepository
 	<<interface>> IReviewRepository
@@ -300,6 +306,7 @@ direction TB
 	<<interface>> IAddReviewUseCase
 	<<interface>> IGetServerReviewsUseCase
 	<<interface>> IApproveServerUseCase
+        <<interface>> IRejecteServerUseCase
 	<<interface>> IHideReviewUseCase
 	<<enumeration>> ServerStatus
 
@@ -321,6 +328,7 @@ direction TB
     IAddReviewUseCase <|.. AddReviewUseCase
     IGetServerReviewsUseCase <|.. GetServerReviewsUseCase
     IApproveServerUseCase <|.. ApproveServerUseCase
+    IRejecteServerUseCase <|.. RejecteServerUseCase
     IHideReviewUseCase <|.. HideReviewUseCase
     IServerQueryStrategy <|.. FilterByCountryStrategy
     IServerQueryStrategy <|.. FilterByModeStrategy
@@ -331,35 +339,37 @@ direction TB
     IServerQueryStrategy <|.. SortByNewestStrategy
     RegisterUseCase --> IUserRepository
     RegisterUseCase --> IRoleRepository
-    RegisterUseCase --> UnitOfWork
+    RegisterUseCase --> IUnitOfWork
     LoginUseCase --> IUserRepository
     LoginUseCase --> IRefreshTokenRepository
-    LoginUseCase --> UnitOfWork
+    LoginUseCase --> IUnitOfWork
     RefreshTokenUseCase --> IRefreshTokenRepository
     RefreshTokenUseCase --> IUserRepository
-    RefreshTokenUseCase --> UnitOfWork
+    RefreshTokenUseCase --> IUnitOfWork
     LogoutUseCase --> IRefreshTokenRepository
-    LogoutUseCase --> UnitOfWork
+    LogoutUseCase --> IUnitOfWork
     AddServerUseCase --> IGameServerRepository
-    AddServerUseCase --> UnitOfWork
+    AddServerUseCase --> IUnitOfWork
     SearchServersUseCase --> IGameServerRepository
     SearchServersUseCase --> ServerQueryPipeline
     RateServerUseCase --> IRatingRepository
-    RateServerUseCase --> UnitOfWork
+    RateServerUseCase --> IUnitOfWork
     AddReviewUseCase --> IReviewRepository
-    AddReviewUseCase --> UnitOfWork
+    AddReviewUseCase --> IUnitOfWork
     GetServerReviewsUseCase --> IReviewRepository
     ApproveServerUseCase --> IGameServerRepository
-    ApproveServerUseCase --> UnitOfWork
+    ApproveServerUseCase --> IUnitOfWork
+    RejecteServerUseCase --> IGameServerRepository
+    RejecteServerUseCase --> IUnitOfWork
     HideReviewUseCase --> IReviewRepository
-    HideReviewUseCase --> UnitOfWork
+    HideReviewUseCase --> IUnitOfWork
     ICheckerFactory <|.. CheckerFactory
     IMinecraftServerChecker <|.. JavaServerChecker
     CheckerFactory ..> IMinecraftServerChecker : Create()
     IMinecraftServerChecker --> ServerCheckResult : Check()
     ServerStatusUpdaterJob --> IGameServerRepository
     ServerStatusUpdaterJob --> ICheckerFactory
-    ServerStatusUpdaterJob --> UnitOfWork
+    ServerStatusUpdaterJob --> IUnitOfWork
     ServerStatusUpdaterJob ..> ServerCheckResult : uses
     ServerQueryPipeline ..|> ISevrverQueryPipeline
 
