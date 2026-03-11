@@ -35,7 +35,7 @@ public sealed class ServerStatusUpdaterJob : BackgroundService
                 _logger.LogError(ex, "Error while updating server statuses.");
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(15), ct);
+            await Task.Delay(TimeSpan.FromMinutes(5), ct);
         }
     }
 
