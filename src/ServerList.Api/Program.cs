@@ -8,6 +8,7 @@ using ServerList.Application;
 using ServerList.Infrastructure;
 using Microsoft.OpenApi.Models;
 using ServerList.Infrastructure.Background;
+using ServerList.Api.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,10 @@ builder.Services.AddHostedService<ServerStatusUpdaterJob>();
 // Build in other DI
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+
+builder.Services.AddScoped<IRefreshTokenCookieService, RefreshTokenCookieService>();
+
 
 // Cors for relationship with frontend
 builder.Services.AddCors(options =>
