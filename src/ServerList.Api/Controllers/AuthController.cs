@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ServerList.Api.Authentication;
 using ServerList.Application.Features.Auth.Login;
 using ServerList.Application.Features.Auth.Logout;
 using ServerList.Application.Features.Auth.RefreshTokens;
@@ -18,18 +19,21 @@ public class AuthController : ControllerBase
     private readonly ILoginUseCase _loginUseCase;
     private readonly IRefreshTokenUseCase _refreshTokenUseCase;
     private readonly ILogoutUseCase _logoutUseCase;
+    private readonly IRefreshTokenCookieService _refreshTokenCookieService;
 
     public AuthController(
         IRegisterUseCase registerUseCase,
         ILoginUseCase loginUserCase,
         IRefreshTokenUseCase refreshTokenUseCase,
-        ILogoutUseCase logoutUseCase
+        ILogoutUseCase logoutUseCase,
+        IRefreshTokenCookieService refreshTokenCookieService
     )
     {
         _registerUseCase = registerUseCase;
         _loginUseCase = loginUserCase;
         _refreshTokenUseCase = refreshTokenUseCase;
         _logoutUseCase = logoutUseCase;
+        _refreshTokenCookieService = refreshTokenCookieService;
     }
 
     [HttpPost("register")]
@@ -51,18 +55,43 @@ public class AuthController : ControllerBase
     {
         var result = await _loginUseCase.ExecuteAsync(request, ct);
 
-        return Ok(result);
+        _refreshTokenCookieService.SetRefreshToken(
+            Response,
+            result.RefreshToken,
+            result.ExpiresAt
+        );
+
+        return Ok(new
+        {
+            accessToken = result.AccessToken,
+            expiresAt = result.ExpiresAt
+        });
     }
 
     [HttpPost("refresh")]
-    public async Task<ActionResult<RefreshTokenResult>> Refresh(
-        [FromBody] RefreshTokenRequest request,
-        CancellationToken ct
-    )
+    public async Task<IActionResult> Refresh(CancellationToken ct)
     {
-        var result = await _refreshTokenUseCase.ExecuteAsync(request, ct);
+        var refreshToken = _refreshTokenCookieService.GetRefreshToken(Request);
 
-        return Ok(result);
+        if(string.IsNullOrWhiteSpace(refreshToken))
+            return Unauthorized();
+
+        var result = await _refreshTokenUseCase.ExecuteAsync(
+            new RefreshTokenRequest(refreshToken),
+            ct
+        );
+
+        _refreshTokenCookieService.SetRefreshToken(
+            Response,
+            result.RefreshToken,
+            result.ExpiresAt
+        );
+
+        return Ok(new
+        {
+            accessToken = result.AccessToken,
+            expiresAt = result.ExpiresAt
+        });
     }
 
     [Authorize]
@@ -84,12 +113,14 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout(
-        [FromBody] LogoutRequest request,
-        CancellationToken ct
-    )
+    public async Task<IActionResult> Logout(CancellationToken ct)
     {
-        await _logoutUseCase.ExecuteAsync(request, ct);
+        var refreshToken = _refreshTokenCookieService.GetRefreshToken(Request);
+
+        if(!string.IsNullOrWhiteSpace(refreshToken))
+            await _logoutUseCase.ExecuteAsync(new LogoutRequest(refreshToken), ct);
+
+        _refreshTokenCookieService.DeleteRefreshToken(Response);
 
         return NoContent();
     }
