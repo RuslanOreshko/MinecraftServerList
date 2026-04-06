@@ -1,31 +1,24 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { login } from "@/features/auth/api/auth.api";
-import { useAuthStore } from "@/features/auth/model/useAuthStore";
-import { getMe } from "@/shared/api/auth.api";
+import { register } from "@/features/auth/api/auth.api";
 
 const router = useRouter();
-const authStore = useAuthStore();
 
 const email = ref("");
 const password = ref("");
+const userName = ref("");
 const error = ref("");
 
-const handleLogin = async () => {
+const handleRegister = async () => {
   try {
     error.value = "";
 
-    const res = await login(email.value, password.value);
+    await register(email.value, password.value, userName.value);
 
-    authStore.setAccessToken(res.accessToken);
-
-    const me = await getMe();
-    authStore.setUser(me);
-
-    router.push("/");
+    router.push("/login");
   } catch (e) {
-    error.value = "Invalid email or password";
+    error.value = "Registration failed";
   }
 };
 </script>
@@ -33,16 +26,17 @@ const handleLogin = async () => {
 <template>
   <div class="auth-page">
     <div class="card">
-      <h2>Login</h2>
+      <h2>Register</h2>
 
+      <input v-model="userName" placeholder="Username" />
       <input v-model="email" placeholder="Email" />
       <input v-model="password" type="password" placeholder="Password" />
 
       <p v-if="error" class="error">{{ error }}</p>
 
-      <button @click="handleLogin">Login</button>
+      <button @click="handleRegister">Create account</button>
 
-      <router-link to="/register">Create account</router-link>
+      <router-link to="/login">Already have account?</router-link>
     </div>
   </div>
 </template>
